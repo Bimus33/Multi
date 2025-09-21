@@ -17,6 +17,9 @@ public class ActivePotion {
     private static final Minecraft mc = Minecraft.getInstance();
     private static final FontRenderer fontRenderer = mc.font;
 
+    private final Color pinkColor = new Color(255, 0, 128);    // Розовый
+    private final Color tealColor = new Color(0, 255, 200);    // Бирюзовый
+
     public ActivePotion() {
         // Конструктор для регистрации
     }
@@ -37,39 +40,51 @@ public class ActivePotion {
         // Находим максимальную ширину среди всех эффектов
         int maxWidth = calculateMaxWidth(activeEffects);
 
+        // Получаем текущие анимированные цвета
+        Color[] currentColors = getAnimatedColors();
+
         // Заголовок
-        String title = TextFormatting.WHITE + "Active Effects";
+        String title = "Active Effects";
         int titleWidth = Math.max(fontRenderer.width(title), maxWidth);
 
         // Рисуем черный фон для заголовка
-        RenderUtil.drawRound(x - 2, y - 2, titleWidth + 4, fontRenderer.lineHeight + 4, 3,
-                new Color(0xFF000000, true));
+        RenderUtil.drawRound(x - 2, y - 2, titleWidth + 4, fontRenderer.lineHeight + 4, 3, Color.BLACK);
 
-        // Рисуем заголовок белым цветом
-        fontRenderer.drawShadow(event.getMatrixStack(), title, x, y, 0xFFFFFF);
+        // Рисуем заголовок с градиентом
+        drawGradientText(event, title, x, y, currentColors[0], currentColors[1]);
 
-        y += fontRenderer.lineHeight + 8; // Отступ после заголовка 1 пиксель
+        y += fontRenderer.lineHeight + 8; // Отступ после заголовка
 
         if (activeEffects.isEmpty()) {
             // Если эффектов нет, показываем сообщение
-            String noEffects = TextFormatting.WHITE + "No active effects";
+            String noEffects = "No active effects";
             int noEffectsWidth = Math.max(fontRenderer.width(noEffects), maxWidth);
 
-            // Черный фон
-            RenderUtil.drawRound(x - 2, y - 2, noEffectsWidth + 4, fontRenderer.lineHeight + 4, 3,
-                    new Color(0xFF000000, true));
+            // Черный фон для сообщения
+            RenderUtil.drawRound(x - 2, y - 2, noEffectsWidth + 4, fontRenderer.lineHeight + 4, 3, Color.BLACK);
 
-            // Белый текст
-            fontRenderer.drawShadow(event.getMatrixStack(), noEffects, x, y, 0xFFFFFF);
+            // Градиентный текст
+            drawGradientText(event, noEffects, x, y, currentColors[0], currentColors[1]);
         } else {
             // Перебираем все активные эффекты
             for (EffectInstance effect : activeEffects) {
                 if (effect != null && effect.getEffect() != null) {
-                    renderEffect(event, effect, x, y, maxWidth);
-                    y += fontRenderer.lineHeight + 7; // Отступ между эффектами 1 пиксель
+                    renderEffect(event, effect, x, y, maxWidth, currentColors);
+                    y += fontRenderer.lineHeight + 7; // Отступ между эффектами
                 }
             }
         }
+    }
+
+    private Color[] getAnimatedColors() {
+        long time = System.currentTimeMillis();
+        float progress = (time % 2000) / 2000.0f; // 2 секунды на полный цикл
+
+        // Используем только розовый и бирюзовый цвета с плавным переходом
+        Color color1 = RenderUtil.interpolateColor(pinkColor, tealColor, progress);
+        Color color2 = RenderUtil.interpolateColor(tealColor, pinkColor, progress);
+
+        return new Color[]{color1, color2};
     }
 
     private int calculateMaxWidth(Collection<EffectInstance> activeEffects) {
@@ -80,7 +95,7 @@ public class ActivePotion {
                 if (effect != null && effect.getEffect() != null) {
                     String effectText = getEffectDisplayName(effect.getEffect()) + " " +
                             getAmplifierText(effect.getAmplifier()) +
-                            TextFormatting.GRAY + " (" + formatDuration(effect.getDuration()) + ")";
+                            " (" + formatDuration(effect.getDuration()) + ")";
                     int width = fontRenderer.width(effectText);
                     if (width > maxWidth) {
                         maxWidth = width;
@@ -91,21 +106,41 @@ public class ActivePotion {
         return maxWidth;
     }
 
-    private void renderEffect(RenderGameOverlayEvent.Post event, EffectInstance effect, int x, int y, int maxWidth) {
+    private void renderEffect(RenderGameOverlayEvent.Post event, EffectInstance effect, int x, int y, int maxWidth, Color[] colors) {
         Effect potionEffect = effect.getEffect();
         String effectName = getEffectDisplayName(potionEffect);
         String duration = formatDuration(effect.getDuration());
         String amplifier = getAmplifierText(effect.getAmplifier());
 
-        String text = TextFormatting.WHITE + effectName + " " + amplifier +
-                TextFormatting.GRAY + " (" + duration + ")";
+        String text = effectName + " " + amplifier + " (" + duration + ")";
 
-        // Рисуем черный фон с максимальной шириной
+        // Рисуем черный фон для эффекта
         RenderUtil.drawRound(x - 2, y - 2, maxWidth + 4, fontRenderer.lineHeight + 4, 3,
-                new Color(0xFF000000, true));
+                Color.BLACK);
 
-        // Рисуем текст эффекта белым цветом
-        fontRenderer.drawShadow(event.getMatrixStack(), text, x, y, 0xFFFFFF);
+        // Рисуем текст эффекта с градиентом
+        drawGradientText(event, text, x, y, colors[0], colors[1]);
+    }
+
+    private void drawGradientText(RenderGameOverlayEvent.Post event, String text, int x, int y, Color startColor, Color endColor) {
+        int currentX = x;
+
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            String charStr = String.valueOf(character);
+
+            // Вычисляем прогресс для градиента (0.0 - 1.0)
+            float progress = text.length() > 1 ? (float) i / (text.length() - 1) : 0.5f;
+
+            // Интерполируем цвет
+            Color color = RenderUtil.interpolateColor(startColor, endColor, progress);
+
+            // Рисуем символ с своим цветом
+            fontRenderer.drawShadow(event.getMatrixStack(), charStr, currentX, y, color.getRGB());
+
+            // Сдвигаем позицию для следующего символа
+            currentX += fontRenderer.width(charStr);
+        }
     }
 
     private String getEffectDisplayName(Effect effect) {
@@ -129,11 +164,11 @@ public class ActivePotion {
         if (amplifier == 0) {
             return "";
         } else if (amplifier == 1) {
-            return TextFormatting.WHITE + "II";
+            return "II";
         } else if (amplifier == 2) {
-            return TextFormatting.WHITE + "III";
+            return "III";
         } else {
-            return TextFormatting.WHITE + "IV";
+            return "IV";
         }
     }
 }
