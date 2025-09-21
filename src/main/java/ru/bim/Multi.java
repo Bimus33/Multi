@@ -8,6 +8,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.bim.hud.ActivePotion;
+import ru.bim.hud.ArrayList;
 import ru.bim.hud.WaterMark;
 import ru.bim.visual.TargetESP;
 
@@ -26,6 +27,7 @@ public class Multi {
         MinecraftForge.EVENT_BUS.register(new HitParticleHandler());
         MinecraftForge.EVENT_BUS.register(new WaterMark());
         MinecraftForge.EVENT_BUS.register(new ActivePotion());
+        MinecraftForge.EVENT_BUS.register(new ArrayList());
 
         LOGGER.info("All modules registered successfully");
     }
