@@ -1,6 +1,7 @@
 package ru.bim;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -25,6 +26,7 @@ public class Multi {
         MinecraftForge.EVENT_BUS.register(new HitParticleHandler());
         MinecraftForge.EVENT_BUS.register(new WaterMark());
         MinecraftForge.EVENT_BUS.register(new ActivePotion());
-        LOGGER.info("WaterMark registered successfully");
+
+        LOGGER.info("All modules registered successfully");
     }
 }

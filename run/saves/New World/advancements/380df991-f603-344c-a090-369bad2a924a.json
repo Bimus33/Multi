@@ -1,10 +1,4 @@
 {
-  "minecraft:adventure/throw_trident": {
-    "criteria": {
-      "shot_trident": "2025-09-20 22:50:48 +0500"
-    },
-    "done": true
-  },
   "minecraft:recipes/food/cooked_porkchop_from_campfire_cooking": {
     "criteria": {
       "has_porkchop": "2025-09-20 21:39:55 +0500"
@@ -17,27 +11,9 @@
     },
     "done": true
   },
-  "minecraft:husbandry/root": {
+  "minecraft:recipes/building_blocks/acacia_planks": {
     "criteria": {
-      "consumed_item": "2025-09-20 22:22:13 +0500"
-    },
-    "done": true
-  },
-  "minecraft:recipes/transportation/dark_oak_boat": {
-    "criteria": {
-      "in_water": "2025-09-20 22:55:28 +0500"
-    },
-    "done": true
-  },
-  "minecraft:recipes/food/cooked_beef_from_campfire_cooking": {
-    "criteria": {
-      "has_beef": "2025-09-20 22:50:19 +0500"
-    },
-    "done": true
-  },
-  "minecraft:recipes/transportation/birch_boat": {
-    "criteria": {
-      "in_water": "2025-09-20 22:55:28 +0500"
+      "has_log": "2025-09-21 11:25:11 +0500"
     },
     "done": true
   },
@@ -47,32 +23,23 @@
     },
     "done": true
   },
-  "minecraft:adventure/kill_all_mobs": {
+  "minecraft:recipes/building_blocks/stone_stairs_from_stone_stonecutting": {
     "criteria": {
-      "minecraft:skeleton": "2025-09-21 10:21:03 +0500",
-      "minecraft:creeper": "2025-09-20 22:16:39 +0500"
-    },
-    "done": false
-  },
-  "minecraft:recipes/transportation/acacia_boat": {
-    "criteria": {
-      "in_water": "2025-09-20 22:55:28 +0500"
+      "has_stone": "2025-09-21 11:30:26 +0500"
     },
     "done": true
   },
-  "minecraft:recipes/transportation/oak_boat": {
+  "minecraft:recipes/building_blocks/stone_bricks": {
     "criteria": {
-      "in_water": "2025-09-20 22:55:28 +0500"
+      "has_stone": "2025-09-21 11:30:26 +0500"
     },
     "done": true
   },
-  "minecraft:husbandry/balanced_diet": {
+  "minecraft:recipes/building_blocks/stone_bricks_from_stone_stonecutting": {
     "criteria": {
-      "sweet_berries": "2025-09-20 22:22:13 +0500",
-      "beef": "2025-09-20 22:50:22 +0500",
-      "enchanted_golden_apple": "2025-09-20 23:03:02 +0500"
+      "has_stone": "2025-09-21 11:30:26 +0500"
     },
-    "done": false
+    "done": true
   },
   "minecraft:adventure/ol_betsy": {
     "criteria": {
@@ -80,21 +47,141 @@
     },
     "done": true
   },
-  "minecraft:recipes/misc/mojang_banner_pattern": {
+  "minecraft:recipes/building_blocks/stripped_dark_oak_wood": {
     "criteria": {
-      "has_enchanted_golden_apple": "2025-09-20 23:02:59 +0500"
+      "has_log": "2025-09-21 11:25:13 +0500"
     },
     "done": true
   },
-  "minecraft:recipes/food/cooked_beef_from_smoking": {
+  "minecraft:nether/root": {
+    "criteria": {
+      "entered_nether": "2025-09-21 11:31:04 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/stonecutter": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef": {
     "criteria": {
       "has_beef": "2025-09-20 22:50:19 +0500"
     },
     "done": true
   },
-  "minecraft:recipes/food/cooked_porkchop_from_smoking": {
+  "minecraft:recipes/brewing/cauldron": {
     "criteria": {
-      "has_porkchop": "2025-09-20 21:39:55 +0500"
+      "has_water_bucket": "2025-09-21 11:30:11 +0500"
+    },
+    "done": true
+  },
+  "minecraft:adventure/adventuring_time": {
+    "criteria": {
+      "minecraft:mountains": "2025-09-20 21:40:31 +0500",
+      "minecraft:forest": "2025-09-21 11:37:35 +0500",
+      "minecraft:taiga": "2025-09-20 21:39:16 +0500",
+      "minecraft:dark_forest": "2025-09-21 11:37:39 +0500",
+      "minecraft:river": "2025-09-20 21:40:30 +0500",
+      "minecraft:wooded_mountains": "2025-09-20 22:16:29 +0500",
+      "minecraft:plains": "2025-09-21 11:37:32 +0500"
+    },
+    "done": false
+  },
+  "minecraft:recipes/misc/charcoal": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:11 +0500"
+    },
+    "done": true
+  },
+  "minecraft:story/lava_bucket": {
+    "criteria": {
+      "lava_bucket": "2025-09-21 11:30:36 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/scaffolding": {
+    "criteria": {
+      "has_bamboo": "2025-09-21 11:25:22 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/smooth_stone": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:husbandry/root": {
+    "criteria": {
+      "consumed_item": "2025-09-20 22:22:13 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/transportation/birch_boat": {
+    "criteria": {
+      "in_water": "2025-09-20 22:55:28 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/chest": {
+    "criteria": {
+      "has_lots_of_items": "2025-09-21 11:25:11 +0500"
+    },
+    "done": true
+  },
+  "minecraft:end/elytra": {
+    "criteria": {
+      "elytra": "2025-09-21 11:28:44 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/stone_slab_from_stone_stonecutting": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/chiseled_stone_bricks_stone_from_stonecutting": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/magenta_dye_from_allium": {
+    "criteria": {
+      "has_red_flower": "2025-09-21 11:25:21 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/enchanting_table": {
+    "criteria": {
+      "has_obsidian": "2025-09-21 11:33:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/transportation/acacia_boat": {
+    "criteria": {
+      "in_water": "2025-09-20 22:55:28 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/dark_oak_wood": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:11 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/jungle_wood": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/acacia_wood": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:11 +0500"
     },
     "done": true
   },
@@ -104,15 +191,21 @@
     },
     "done": true
   },
+  "minecraft:recipes/building_blocks/stone_slab": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
   "minecraft:adventure/root": {
     "criteria": {
       "killed_something": "2025-09-20 21:39:52 +0500"
     },
     "done": true
   },
-  "minecraft:recipes/food/cooked_porkchop": {
+  "minecraft:recipes/redstone/stone_pressure_plate": {
     "criteria": {
-      "has_porkchop": "2025-09-20 21:39:55 +0500"
+      "has_stone": "2025-09-21 11:30:26 +0500"
     },
     "done": true
   },
@@ -122,9 +215,15 @@
     },
     "done": true
   },
-  "minecraft:recipes/food/cooked_beef": {
+  "minecraft:recipes/misc/red_dye_from_tulip": {
     "criteria": {
-      "has_beef": "2025-09-20 22:50:19 +0500"
+      "has_red_flower": "2025-09-21 11:25:20 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/stone_brick_slab_from_stone_stonecutting": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
     },
     "done": true
   },
@@ -140,14 +239,170 @@
     },
     "done": true
   },
-  "minecraft:adventure/adventuring_time": {
+  "minecraft:recipes/decorations/stone_brick_walls_from_stone_stonecutting": {
     "criteria": {
-      "minecraft:mountains": "2025-09-20 21:40:31 +0500",
-      "minecraft:taiga": "2025-09-20 21:39:16 +0500",
-      "minecraft:river": "2025-09-20 21:40:30 +0500",
-      "minecraft:wooded_mountains": "2025-09-20 22:16:29 +0500"
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/flint_and_steel": {
+    "criteria": {
+      "has_obsidian": "2025-09-21 11:33:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/orange_dye_from_orange_tulip": {
+    "criteria": {
+      "has_red_flower": "2025-09-21 11:25:20 +0500"
+    },
+    "done": true
+  },
+  "minecraft:adventure/throw_trident": {
+    "criteria": {
+      "shot_trident": "2025-09-20 22:50:48 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/stone_brick_stairs_from_stone_stonecutting": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/transportation/dark_oak_boat": {
+    "criteria": {
+      "in_water": "2025-09-20 22:55:28 +0500"
+    },
+    "done": true
+  },
+  "minecraft:adventure/kill_all_mobs": {
+    "criteria": {
+      "minecraft:skeleton": "2025-09-21 10:21:03 +0500",
+      "minecraft:ghast": "2025-09-21 11:31:15 +0500",
+      "minecraft:creeper": "2025-09-20 22:16:39 +0500"
     },
     "done": false
+  },
+  "minecraft:recipes/building_blocks/dark_oak_planks": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:11 +0500"
+    },
+    "done": true
+  },
+  "minecraft:story/enter_the_nether": {
+    "criteria": {
+      "entered_nether": "2025-09-21 11:31:04 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/birch_wood": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:husbandry/balanced_diet": {
+    "criteria": {
+      "sweet_berries": "2025-09-20 22:22:13 +0500",
+      "beef": "2025-09-20 22:50:22 +0500",
+      "rotten_flesh": "2025-09-21 11:23:13 +0500",
+      "enchanted_golden_apple": "2025-09-20 23:03:02 +0500"
+    },
+    "done": false
+  },
+  "minecraft:recipes/misc/mojang_banner_pattern": {
+    "criteria": {
+      "has_enchanted_golden_apple": "2025-09-20 23:02:59 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef_from_smoking": {
+    "criteria": {
+      "has_beef": "2025-09-20 22:50:19 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/crimson_planks": {
+    "criteria": {
+      "has_logs": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/jungle_planks": {
+    "criteria": {
+      "has_logs": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/stick_from_bamboo_item": {
+    "criteria": {
+      "has_bamboo": "2025-09-21 11:25:22 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/stone_stairs": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:nether/explore_nether": {
+    "criteria": {
+      "minecraft:crimson_forest": "2025-09-21 11:32:16 +0500",
+      "minecraft:nether_wastes": "2025-09-21 11:31:10 +0500",
+      "minecraft:soul_sand_valley": "2025-09-21 11:31:26 +0500",
+      "minecraft:warped_forest": "2025-09-21 11:32:31 +0500",
+      "minecraft:basalt_deltas": "2025-09-21 11:31:04 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/birch_planks": {
+    "criteria": {
+      "has_logs": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/stripped_crimson_hyphae": {
+    "criteria": {
+      "has_log": "2025-09-21 11:25:12 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_beef_from_campfire_cooking": {
+    "criteria": {
+      "has_beef": "2025-09-20 22:50:19 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/redstone/stone_button": {
+    "criteria": {
+      "has_stone": "2025-09-21 11:30:26 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/transportation/oak_boat": {
+    "criteria": {
+      "in_water": "2025-09-20 22:55:28 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_porkchop_from_smoking": {
+    "criteria": {
+      "has_porkchop": "2025-09-20 21:39:55 +0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cooked_porkchop": {
+    "criteria": {
+      "has_porkchop": "2025-09-20 21:39:55 +0500"
+    },
+    "done": true
+  },
+  "minecraft:story/form_obsidian": {
+    "criteria": {
+      "obsidian": "2025-09-21 11:33:12 +0500"
+    },
+    "done": true
   },
   "DataVersion": 2586
 }
