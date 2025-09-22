@@ -7,26 +7,18 @@ import net.minecraftforge.fml.common.Mod;
 import ru.bim.util.RenderUtil;
 
 import java.awt.*;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = "multi", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArrayList {
 
     private static final int PADDING = 4;
-    private static final int CORNER_RADIUS = 3;
-    private static final int LINE_HEIGHT = 12;
+    private static final int CORNER_RADIUS = 4;
+    private static final int LINE_HEIGHT = 14;
 
     private static final Color PINK_COLOR = new Color(255, 0, 128);
     private static final Color TEAL_COLOR = new Color(0, 255, 200);
-
-    // Пример списка (заменишь на свои активные модули/данные)
-    private static final List<String> modules = Arrays.asList(
-            "Sprint",
-            "Fly",
-            "KillAura",
-            "ESP"
-    );
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
@@ -36,29 +28,49 @@ public class ArrayList {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return;
 
-        int x = 350; // Позиция по X
-        int y = 5;   // Позиция по Y
+        // Собираем только HUD элементы
+        List<String> activeHud = new java.util.ArrayList<>();
+        if (HudManager.showWatermark) activeHud.add("WaterMark");
+        if (HudManager.showPing) activeHud.add("Ping");
+        if (HudManager.showCoordinates) activeHud.add("Coordinates");
+        if (HudManager.showArrayList) activeHud.add("ArrayList");
+        if (HudManager.showInventory) activeHud.add("Inventory");
+        if (HudManager.showActivePotion) activeHud.add("ActivePotion");
+        if (HudManager.showTargetHUD) activeHud.add("TargetHUD");
 
-        // Определяем ширину окна по самому длинному тексту
-        int maxWidth = 0;
-        for (String module : modules) {
-            maxWidth = Math.max(maxWidth, mc.font.width(module));
-        }
-        int boxWidth = maxWidth + PADDING * 2;
-        int boxHeight = modules.size() * LINE_HEIGHT + PADDING;
+        if (activeHud.isEmpty()) return;
 
-        // Тень + фон
-        RenderUtil.drawShadow(x, y, boxWidth, boxHeight, 2f, new Color(0, 255, 0, 180));
-        RenderUtil.drawRound(x, y, boxWidth, boxHeight, CORNER_RADIUS, Color.BLACK);
+        int screenWidth = mc.getWindow().getGuiScaledWidth();
+
+        // Сортировка по длине (от длинных к коротким)
+// Сортировка: длина ↓, потом алфавит ↑
+        activeHud.sort(
+                Comparator.comparingInt(String::length).reversed()
+                        .thenComparing(Comparator.naturalOrder())
+        );
+
 
         // Цвета для текста
         Color[] currentColors = getAnimatedColors();
 
-        // Рисуем список
-        int offsetY = y + PADDING;
-        for (String module : modules) {
-            drawGradientText(event, module, x + PADDING, offsetY, currentColors[0], currentColors[1]);
-            offsetY += LINE_HEIGHT;
+        // Рисуем каждый модуль отдельным боксом
+        int y = 5;
+        for (String module : activeHud) {
+            int textWidth = mc.font.width(module);
+            int boxWidth = textWidth + PADDING * 2;
+            int boxHeight = LINE_HEIGHT;
+
+            int x = screenWidth - boxWidth - 5;
+
+            // Тень + фон для каждого модуля
+            RenderUtil.drawShadow(x, y, boxWidth, boxHeight, 2f, new Color(0, 255, 0, 180));
+            RenderUtil.drawRound(x, y, boxWidth, boxHeight, CORNER_RADIUS, Color.BLACK);
+
+            // Текст с градиентом
+            drawGradientText(event, module, x + PADDING, y + (LINE_HEIGHT - 10) / 2,
+                    currentColors[0], currentColors[1]);
+
+            y += LINE_HEIGHT + 1; // отступ между боксами
         }
     }
 

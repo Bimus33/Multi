@@ -1,8 +1,12 @@
 package ru.bim.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MainWindow;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -205,6 +209,38 @@ public class RenderUtil {
         drawAnimatedGradientRound((float) x, (float) y, (float) width, (float) height, (float) radius,
                 color1, color2, color3, color4, gradientType, angle, animationType, animationId);
     }
+
+    public static void drawGradientRound(int x, int y, int width, int height, int radius,
+                                         Color c1, Color c2, boolean vertical) {
+        // vertical = true → градиент сверху вниз
+        // vertical = false → градиент слева направо
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuilder();
+
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+        RenderSystem.defaultBlendFunc();
+
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+        if (vertical) {
+            buffer.vertex(x, y + height, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+            buffer.vertex(x + width, y + height, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+            buffer.vertex(x + width, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+            buffer.vertex(x, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        } else {
+            buffer.vertex(x, y + height, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+            buffer.vertex(x + width, y + height, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+            buffer.vertex(x + width, y, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+            buffer.vertex(x, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        }
+
+        tessellator.end();
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+    }
+
 
     public static void drawAnimatedGradientRound(float x, float y, float width, float height, float radius,
                                                  Color color1, Color color2, Color color3, Color color4,
