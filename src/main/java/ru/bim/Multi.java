@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.bim.hud.ActivePotion;
 import ru.bim.hud.ArrayList;
+import ru.bim.hud.TargetHUD;
 import ru.bim.hud.WaterMark;
 import ru.bim.visual.TargetESP;
 
@@ -28,6 +29,7 @@ public class Multi {
         MinecraftForge.EVENT_BUS.register(new WaterMark());
         MinecraftForge.EVENT_BUS.register(new ActivePotion());
         MinecraftForge.EVENT_BUS.register(new ArrayList());
+        MinecraftForge.EVENT_BUS.register(new TargetHUD());
 
         LOGGER.info("All modules registered successfully");
     }

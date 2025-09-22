@@ -24,6 +24,7 @@ public class ping {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
+        if (!HudManager.showPing) return;
 
         // Получаем пинг
         String pingText = getPingText();
