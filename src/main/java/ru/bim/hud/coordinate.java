@@ -1,7 +1,9 @@
 package ru.bim.hud;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import ru.bim.util.RenderUtil;
@@ -18,28 +20,70 @@ public class coordinate {
     private static final Color PINK_COLOR = new Color(255, 0, 128);
     private static final Color TEAL_COLOR = new Color(0, 255, 200);
 
+    // === Позиция и перетаскивание ===
+    private static int posX = 500;
+    private static int posY = 3;
+    private static boolean dragging = false;
+    private static int dragOffsetX, dragOffsetY;
+
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
         if (!HudManager.showCoordinates) return;
+
         String coordText = getCoordinates();
         int textWidth = mc.font.width(coordText);
         int elementWidth = textWidth + PADDING * 2;
 
-        int xPos = 500;
-        int yPos = 3;
-
         Color[] currentColors = getAnimatedColors();
 
-        RenderUtil.drawShadow(xPos, yPos, elementWidth, ELEMENT_HEIGHT,
+        RenderUtil.drawShadow(posX, posY, elementWidth, ELEMENT_HEIGHT,
                 2f, new Color(0, 255, 0, 180));
-        RenderUtil.drawRound(xPos, yPos, elementWidth, ELEMENT_HEIGHT, CORNER_RADIUS, Color.BLACK);
+        RenderUtil.drawRound(posX, posY, elementWidth, ELEMENT_HEIGHT, CORNER_RADIUS, Color.BLACK);
 
-        drawGradientText(event, coordText, xPos + PADDING, yPos + 4, currentColors[0], currentColors[1]);
+        drawGradientText(event, coordText, posX + PADDING, posY + 4, currentColors[0], currentColors[1]);
     }
 
+    // === События мыши для перетаскивания ===
+    @SubscribeEvent
+    public static void onMouseClick(GuiScreenEvent.MouseClickedEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return;
+
+        String coordText = getCoordinates();
+        int textWidth = mc.font.width(coordText);
+        int elementWidth = textWidth + PADDING * 2;
+
+        int mouseX = (int) event.getMouseX();
+        int mouseY = (int) event.getMouseY();
+
+        if (event.getButton() == 0 &&
+                mouseX >= posX && mouseX <= posX + elementWidth &&
+                mouseY >= posY && mouseY <= posY + ELEMENT_HEIGHT) {
+            dragging = true;
+            dragOffsetX = mouseX - posX;
+            dragOffsetY = mouseY - posY;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMouseRelease(GuiScreenEvent.MouseReleasedEvent.Pre event) {
+        dragging = false;
+    }
+
+    @SubscribeEvent
+    public static void onMouseDrag(GuiScreenEvent.MouseDragEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return;
+        if (dragging) {
+            posX = (int) event.getMouseX() - dragOffsetX;
+            posY = (int) event.getMouseY() - dragOffsetY;
+        }
+    }
+
+    // === Логика ===
     private static String getCoordinates() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {

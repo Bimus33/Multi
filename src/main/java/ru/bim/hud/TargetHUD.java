@@ -1,20 +1,24 @@
 package ru.bim.hud;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.AbstractGui;
 import ru.bim.util.RenderUtil;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Mod.EventBusSubscriber(modid = "multi", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class TargetHUD extends AbstractGui {
 
     private final Minecraft mc;
@@ -23,12 +27,16 @@ public class TargetHUD extends AbstractGui {
     private static final long TARGET_TIMEOUT = 2000; // 2 секунды
 
     // Настройки HUD
-    private int x = 500;
-    private int y = 500;
-    private int width = 120;
-    private int height = 40;
+    private static int x = 500;
+    private static int y = 500;
+    private static int width = 120;
+    private static int height = 40;
     private int healthBarHeight = 8;
     private int textMargin = 2;
+
+    // Перетаскивание
+    private static boolean dragging = false;
+    private static int dragOffsetX, dragOffsetY;
 
     public TargetHUD() {
         this.mc = Minecraft.getInstance();
@@ -74,17 +82,15 @@ public class TargetHUD extends AbstractGui {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        // Тень зелёного цвета толщиной 2 пикселя
+        // Тень и фон
         RenderUtil.drawShadow(x, y, width, height, 2f, new Color(0, 255, 0, 180));
-
-        // Фон HUD — чёрный, непрозрачный
         RenderUtil.drawRound(x, y, width, height, 6, Color.BLACK);
 
         // Имя цели
         String name = currentTarget.getName().getString();
         mc.font.drawShadow(matrixStack, name, x + textMargin, y + textMargin, 0xFFFFFFFF);
 
-        // Здоровье текст
+        // Здоровье
         float health = currentTarget.getHealth();
         float maxHealth = currentTarget.getMaxHealth();
         String healthText = String.format("%.1f/%.1f", health, maxHealth);
@@ -95,10 +101,9 @@ public class TargetHUD extends AbstractGui {
         int barY = y + mc.font.lineHeight + textMargin * 2;
         int barWidth = width - textMargin * 2;
         float healthPercent = Math.max(0, Math.min(1, health / maxHealth));
-
         renderGradientHealthBar(matrixStack, x + textMargin, barY, barWidth, healthBarHeight, healthPercent);
 
-        // Дополнительная информация
+        // Дистанция
         String distance = String.format("%.1fm", currentTarget.distanceTo(mc.player));
         int distanceY = barY + healthBarHeight + textMargin;
         mc.font.drawShadow(matrixStack, distance, x + textMargin, distanceY, 0xFFFFFFFF);
@@ -110,12 +115,10 @@ public class TargetHUD extends AbstractGui {
     private void renderGradientHealthBar(MatrixStack matrixStack, int x, int y, int width, int height, float percent) {
         int fillWidth = (int) (width * percent);
 
-        // Фон полосы (без тени и без обводки)
         RenderUtil.drawRound(x, y, width, height, 4, new Color(50, 50, 50, 200));
 
         if (fillWidth > 0) {
-            RenderUtil.drawRound(x, y, fillWidth, height, 4,
-                    getSmoothHealthColor(percent));
+            RenderUtil.drawRound(x, y, fillWidth, height, 4, getSmoothHealthColor(percent));
         }
     }
 
@@ -124,34 +127,42 @@ public class TargetHUD extends AbstractGui {
         return Color.getHSBColor(hue, 0.9f, 0.9f);
     }
 
-    private void drawRect(MatrixStack matrixStack, int x, int y, int width, int height, Color color) {
-        fill(matrixStack, x, y, x + width, y + height, color.getRGB());
+    // === Перетаскивание как у ArrayList ===
+    @SubscribeEvent
+    public static void onMouseClick(GuiScreenEvent.MouseClickedEvent.Pre e) {
+        if (!(Minecraft.getInstance().screen instanceof ChatScreen)) return;
+
+        int mouseX = (int) e.getMouseX();
+        int mouseY = (int) e.getMouseY();
+
+        if (e.getButton() == 0) {
+            if (mouseX >= x && mouseX <= x + width &&
+                    mouseY >= y && mouseY <= y + 14) { // верх HUD как «заголовок»
+                dragging = true;
+                dragOffsetX = mouseX - x;
+                dragOffsetY = mouseY - y;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMouseRelease(GuiScreenEvent.MouseReleasedEvent.Pre e) {
+        dragging = false;
+    }
+
+    @SubscribeEvent
+    public static void onMouseDrag(GuiScreenEvent.MouseDragEvent.Pre e) {
+        if (!(Minecraft.getInstance().screen instanceof ChatScreen)) return;
+        if (dragging) {
+            x = (int) e.getMouseX() - dragOffsetX;
+            y = (int) e.getMouseY() - dragOffsetY;
+        }
     }
 
     // Методы управления HUD
-    public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    public void setTarget(LivingEntity target) {
-        this.currentTarget = target;
-        this.lastTargetTime = System.currentTimeMillis();
-    }
-
-    public LivingEntity getCurrentTarget() {
-        if (System.currentTimeMillis() - lastTargetTime < TARGET_TIMEOUT) {
-            return currentTarget;
-        }
-        return null;
-    }
-
-    public boolean isVisible() {
-        return currentTarget != null && System.currentTimeMillis() - lastTargetTime < TARGET_TIMEOUT;
-    }
+    public void setPosition(int x, int y) { TargetHUD.x = x; TargetHUD.y = y; }
+    public void setSize(int width, int height) { TargetHUD.width = width; TargetHUD.height = height; }
+    public void setTarget(LivingEntity target) { this.currentTarget = target; this.lastTargetTime = System.currentTimeMillis(); }
+    public LivingEntity getCurrentTarget() { return System.currentTimeMillis() - lastTargetTime < TARGET_TIMEOUT ? currentTarget : null; }
+    public boolean isVisible() { return currentTarget != null && System.currentTimeMillis() - lastTargetTime < TARGET_TIMEOUT; }
 }

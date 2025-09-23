@@ -1,7 +1,9 @@
 package ru.bim.hud;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import ru.bim.util.RenderUtil;
@@ -13,12 +15,21 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = "multi", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArrayList {
 
-    private static final int PADDING = 4;
-    private static final int CORNER_RADIUS = 4;
+    private static final int PADDING = 8;
+    private static final int CORNER_RADIUS = 2;
     private static final int LINE_HEIGHT = 14;
 
     private static final Color PINK_COLOR = new Color(255, 0, 128);
     private static final Color TEAL_COLOR = new Color(0, 255, 200);
+
+    // позиция списка
+    private static int posX = 5;
+    private static int posY = 160;
+
+    // для перетаскивания
+    private static boolean dragging = false;
+    private static int dragOffsetX;
+    private static int dragOffsetY;
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
@@ -40,37 +51,65 @@ public class ArrayList {
 
         if (activeHud.isEmpty()) return;
 
-        int screenWidth = mc.getWindow().getGuiScaledWidth();
-
-        // Сортировка по длине (от длинных к коротким)
-// Сортировка: длина ↓, потом алфавит ↑
+        // сортировка
         activeHud.sort(
                 Comparator.comparingInt(String::length).reversed()
                         .thenComparing(Comparator.naturalOrder())
         );
 
-
         // Цвета для текста
         Color[] currentColors = getAnimatedColors();
 
-        // Рисуем каждый модуль отдельным боксом
-        int y = 5;
+        // рисуем каждый модуль отдельным боксом
+        int y = posY;
         for (String module : activeHud) {
             int textWidth = mc.font.width(module);
             int boxWidth = textWidth + PADDING * 2;
             int boxHeight = LINE_HEIGHT;
 
-            int x = screenWidth - boxWidth - 5;
+            int x = posX;
 
-            // Тень + фон для каждого модуля
             RenderUtil.drawShadow(x, y, boxWidth, boxHeight, 2f, new Color(0, 255, 0, 180));
             RenderUtil.drawRound(x, y, boxWidth, boxHeight, CORNER_RADIUS, Color.BLACK);
 
-            // Текст с градиентом
             drawGradientText(event, module, x + PADDING, y + (LINE_HEIGHT - 10) / 2,
                     currentColors[0], currentColors[1]);
 
-            y += LINE_HEIGHT + 1; // отступ между боксами
+            y += LINE_HEIGHT + 1;
+        }
+    }
+
+    // обработка мыши
+    @SubscribeEvent
+    public static void onMouseClick(GuiScreenEvent.MouseClickedEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return; // только в чате
+
+        int mouseX = (int) event.getMouseX();
+        int mouseY = (int) event.getMouseY();
+
+        // проверяем клик по области заголовка (верхний бокс)
+        if (event.getButton() == 0) {
+            if (mouseX >= posX && mouseX <= posX + 100 && mouseY >= posY && mouseY <= posY + LINE_HEIGHT) {
+                dragging = true;
+                dragOffsetX = mouseX - posX;
+                dragOffsetY = mouseY - posY;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMouseRelease(GuiScreenEvent.MouseReleasedEvent.Pre event) {
+        dragging = false;
+    }
+
+    @SubscribeEvent
+    public static void onMouseDrag(GuiScreenEvent.MouseDragEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return;
+        if (dragging) {
+            posX = (int) event.getMouseX() - dragOffsetX;
+            posY = (int) event.getMouseY() - dragOffsetY;
         }
     }
 

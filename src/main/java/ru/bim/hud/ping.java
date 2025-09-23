@@ -1,7 +1,9 @@
 package ru.bim.hud;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import ru.bim.util.RenderUtil;
@@ -18,6 +20,12 @@ public class ping {
     private static final Color PINK_COLOR = new Color(255, 0, 128);    // Розовый
     private static final Color TEAL_COLOR = new Color(0, 255, 200);    // Бирюзовый
 
+    // Позиция и перетаскивание
+    private static int posX = 100;
+    private static int posY = 3;
+    private static boolean dragging = false;
+    private static int dragOffsetX, dragOffsetY;
+
     @SubscribeEvent
     public static void onRenderOverlay(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
@@ -26,72 +34,88 @@ public class ping {
         if (mc.level == null || mc.player == null) return;
         if (!HudManager.showPing) return;
 
-        // Получаем пинг
         String pingText = getPingText();
         int textWidth = mc.font.width(pingText);
         int elementWidth = textWidth + PADDING * 2;
 
-        // Получаем текущие анимированные цвета
         Color[] currentColors = getAnimatedColors();
 
-        // Позиция в левом верхнем углу
-        int xPos = 100; // Отступ от левого края
-        int yPos = 3; // Отступ от верхнего края
+        // Фон
+        RenderUtil.drawRound(posX, posY, elementWidth, ELEMENT_HEIGHT, CORNER_RADIUS, Color.BLACK);
 
-        // Рисуем черный фон с плавными углами
-        RenderUtil.drawRound(xPos, yPos, elementWidth, ELEMENT_HEIGHT, CORNER_RADIUS, Color.BLACK);
+        // Текст
+        drawGradientText(event, pingText, posX + PADDING, posY + 4, currentColors[0], currentColors[1]);
+    }
 
-        // Рисуем текст с градиентом
-        drawGradientText(event, pingText, xPos + PADDING, yPos + 4, currentColors[0], currentColors[1]);
+    // === Перетаскивание как в ArrayList ===
+    @SubscribeEvent
+    public static void onMouseClick(GuiScreenEvent.MouseClickedEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return;
+
+        int mouseX = (int) event.getMouseX();
+        int mouseY = (int) event.getMouseY();
+
+        String pingText = getPingText();
+        int textWidth = mc.font.width(pingText);
+        int elementWidth = textWidth + PADDING * 2;
+
+        if (event.getButton() == 0) {
+            if (mouseX >= posX && mouseX <= posX + elementWidth &&
+                    mouseY >= posY && mouseY <= posY + ELEMENT_HEIGHT) {
+                dragging = true;
+                dragOffsetX = mouseX - posX;
+                dragOffsetY = mouseY - posY;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMouseRelease(GuiScreenEvent.MouseReleasedEvent.Pre event) {
+        dragging = false;
+    }
+
+    @SubscribeEvent
+    public static void onMouseDrag(GuiScreenEvent.MouseDragEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.screen instanceof ChatScreen)) return;
+        if (dragging) {
+            posX = (int) event.getMouseX() - dragOffsetX;
+            posY = (int) event.getMouseY() - dragOffsetY;
+        }
     }
 
     private static String getPingText() {
         Minecraft mc = Minecraft.getInstance();
-
         if (mc.getConnection() != null && mc.player != null) {
             try {
                 net.minecraft.client.network.play.NetworkPlayerInfo info =
                         mc.getConnection().getPlayerInfo(mc.player.getUUID());
                 if (info != null) {
-                    int latency = info.getLatency();
-                    return latency + "ms";
+                    return info.getLatency() + "ms";
                 }
-            } catch (Exception e) {
-                // В случае ошибки возвращаем N/A
-            }
+            } catch (Exception ignored) {}
         }
         return "N/A";
     }
 
     private static Color[] getAnimatedColors() {
         long time = System.currentTimeMillis();
-        float progress = (time % 2000) / 2000.0f; // 2 секунды на полный цикл
-
-        // Используем только розовый и бирюзовый цвета с плавным переходом
+        float progress = (time % 2000) / 2000.0f;
         Color color1 = RenderUtil.interpolateColor(PINK_COLOR, TEAL_COLOR, progress);
         Color color2 = RenderUtil.interpolateColor(TEAL_COLOR, PINK_COLOR, progress);
-
         return new Color[]{color1, color2};
     }
 
-    private static void drawGradientText(RenderGameOverlayEvent.Post event, String text, int x, int y, Color startColor, Color endColor) {
+    private static void drawGradientText(RenderGameOverlayEvent.Post event, String text, int x, int y,
+                                         Color startColor, Color endColor) {
         Minecraft mc = Minecraft.getInstance();
         int currentX = x;
-
         for (int i = 0; i < text.length(); i++) {
-            char character = text.charAt(i);
-            String charStr = String.valueOf(character);
-
-            // Вычисляем прогресс для градиента (0.0 - 1.0)
+            String charStr = String.valueOf(text.charAt(i));
             float progress = text.length() > 1 ? (float) i / (text.length() - 1) : 0.5f;
-
-            // Интерполируем цвет
             Color color = RenderUtil.interpolateColor(startColor, endColor, progress);
-
-            // Рисуем символ с своим цветом
             mc.font.draw(event.getMatrixStack(), charStr, currentX, y, color.getRGB());
-
-            // Сдвигаем позицию для следующего символа
             currentX += mc.font.width(charStr);
         }
     }
